@@ -6,18 +6,34 @@
 ## Запуск
 
 ```bash
-docker compose up --build
+cp .env.example .env   # при необходимости поменяйте HTTP_PORT
+docker compose up --build -d
 ```
 
-Откройте http://localhost:8888
+По умолчанию: http://localhost:18080
+
+Если порт занят (как было с `8888`), задайте свободный в `.env`:
+
+```bash
+# .env
+HTTP_PORT=18081
+```
+
+Проверить, чем занят порт:
+
+```bash
+ss -tlnp | grep -E ':(8888|18080)\b'
+# или
+docker ps --format 'table {{.Names}}\t{{.Ports}}'
+```
 
 ## Сервисы
 
 | Сервис | Роль |
 |--------|------|
-| `caddy` | reverse proxy на порту `8888` |
+| `caddy` | reverse proxy на хост-порту `HTTP_PORT` (по умолчанию `18080`) |
 | `app` | Express API + статический фронт |
-| `db` | PostgreSQL 16 |
+| `db` | PostgreSQL 16 (порт наружу не публикуется) |
 
 ## API
 
